@@ -4,23 +4,33 @@ package token
 const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
+	IDENT   = "IDENT" //variables or fn names like add,foobar,x,y
+	INT     = "INT"   //number like 1234
 
-	IDENT = "IDENT" //variables or fn names like add,foobar,x,y
-	INT   = "INT"   //number like 1234
-
-	ASSIGN = "="
-	PLUS   = "+"
-
+	ASSIGN    = "="
+	PLUS      = "+"
+	MINUS     = "-"
+	ASTERIK   = "*"
+	BANG      = "!"
+	SLASH     = "/"
+	LT        = "<"
+	GT        = ">"
 	COMMA     = ","
 	SEMICOLON = ";"
-
-	LPAREN = "("
-	RPAREN = ")"
-	LBRACE = "{"
-	RBRACE = "}"
-
+	LPAREN    = "("
+	RPAREN    = ")"
+	LBRACE    = "{"
+	RBRACE    = "}"
+	EQ        = "=="
+	NOT_EQ    = "!="
+	///keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	RETURN   = "RETURN"
 )
 
 type TokenType string
@@ -31,8 +41,13 @@ type Token struct {
 }
 
 var keywords = map[string]TokenType{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 func LookUpIdent(ident string) TokenType {
