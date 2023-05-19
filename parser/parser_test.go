@@ -506,3 +506,37 @@ func TestIfExpression(t *testing.T) {
 		return
 	}
 }
+func TestFunctionLiteralExpression(t *testing.T) {
+	input := `fn(x,y){x+y;}`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	if len(program.Statements) != 1 {
+		t.Fatalf("program.Body does not contain %d statements. got=%d\n",
+			1, len(program.Statements))
+	}
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
+			program.Statements[0])
+	}
+	function, ok := stmt.Expression.(*ast.FunctionLiteral)
+	if !ok {
+		t.Fatalf("stmt.Expression is not ast.FunctionLiteral. got=%T",
+			stmt.Expression)
+	}
+
+	testLiteralExpression(t, function.Parameters[0], "x")
+	testLiteralExpression(t, function.Parameters[1], "y")
+	if len(function.Body.Statements) != 1 {
+		t.Fatalf("function.Body.statements has not 1 statement got =%d", len(function.Body.Statements))
+	}
+	bodyStmt, ok := function.Body.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("funciton body stmt is not ast.ExpressionStatement got =%q", function.Body.Statements[0])
+
+	}
+	testInfixExpression(t, bodyStmt.Expression, "x", "+", "y")
+
+}
