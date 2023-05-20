@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/sandeshsitaula/monkeyinter/ast"
@@ -29,6 +30,7 @@ var precedences = map[token.TokenType]int{
 	token.MINUS:   SUM,
 	token.SLASH:   PRODUCT,
 	token.ASTERIK: PRODUCT,
+	token.LPAREN:  CALL,
 }
 
 func (p *Parser) peekPrecedence() int {
@@ -81,6 +83,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.EQ, p.parseInfixExpression)
 	p.registerInfix(token.NOT_EQ, p.parseInfixExpression)
 	p.registerInfix(token.LT, p.parseInfixExpression)
+	p.registerInfix(token.LPAREN, p.parseCallExpression)
 	p.registerInfix(token.GT, p.parseInfixExpression)
 	p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
 	return p
@@ -290,7 +293,7 @@ func (p *Parser) parseIfExpression() ast.Expression {
 // for parsing function expression
 func (p *Parser) parseFunctionLiteral() ast.Expression {
 	lit := &ast.FunctionLiteral{Token: p.curToken}
-
+	fmt.Fprintln(os.Stderr, p.curToken)
 	if !p.expectPeek(token.LPAREN) {
 		return nil
 	}
@@ -323,6 +326,35 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 		return nil
 	}
 	return identifiers
+}
+
+// ////////////
+// for parsing function call
+func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {
+	exp := &ast.CallExpression{Token: p.curToken, Function: function}
+	exp.Arguments = p.parseCallArguments()
+	return exp
+}
+
+func (p *Parser) parseCallArguments() []ast.Expression {
+	args := []ast.Expression{}
+	if p.peekTokenIs(token.RPAREN) {
+		p.nextToken()
+		return args
+	}
+	p.nextToken()
+	args = append(args, p.parseExpression(LOWEST))
+
+	for p.peekTokenIs(token.COMMA) {
+		p.nextToken()
+		p.nextToken()
+		args = append(args, p.parseExpression(LOWEST))
+
+	}
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+	return args
 }
 
 // To parse statements written inside if clause
