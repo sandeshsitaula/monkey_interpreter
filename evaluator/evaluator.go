@@ -43,7 +43,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return &object.Function{Parameters: params, Env: env, Body: body}
 
 	case *ast.CallExpression:
-		function := Eval(node.Function, env)
+		function := Eval(node.Function, env)//here node.Function refers to identifier name function gets object.Function from environment
 		if isError(function) {
 			return function
 		}
@@ -51,6 +51,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if len(args) == 1 && isError(args[0]) {
 			return args[0]
 		}
+		return applyFunction(function,args)
 
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
@@ -101,11 +102,47 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	return nil
 }
 
+//all related to funciton calling
+
+
+//applyFunction gets object.Function because of environment get operation
+func applyFunction(fn object.Object,args []object.Object)object.Object{
+	function,ok:=fn.(*object.Function)
+	if !ok{
+		return newError("not a function : %s",fn.Type())
+	}
+
+	//extendedEnv creates new Environment which extends inner Environment  so all variables can be accessed 
+	extendedEnv:=extendFunctionEnv(function,args)
+	evaluated:=Eval(function.Body,extendedEnv)
+	//unwrapReturnValue returns if return statement is found 
+	return unwrapReturnValue(evaluated)
+
+}
+
+func extendFunctionEnv(fn *object.Function,args []object.Object)*object.Environment{
+	env:=object.NewEnclosedEnvironment(fn.Env)
+
+	for paramIdx,param:=range fn.Parameters{
+		env.Set(param.Value,args[paramIdx])
+	}
+	return env
+}
+func unwrapReturnValue(obj object.Object)object.Object{
+	if returnValue,ok:=obj.(*object.ReturnValue);ok{
+		return returnValue.Value
+	}
+	return obj
+}
+
+
+////////////////////////
 func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Object {
 	var result []object.Object
 
 	for _, e := range exps {
 		evaluated := Eval(e, env)
+
 		if isError(evaluated) {
 			return []object.Object{evaluated}
 		}
@@ -113,6 +150,9 @@ func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Ob
 	}
 	return result
 }
+
+
+
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
 	val, ok := env.Get(node.Value)
 	if !ok {
@@ -258,3 +298,6 @@ func evalBlockStatements(block *ast.BlockStatement, env *object.Environment) obj
 func newError(format string, a ...interface{}) *object.Error {
 	return &object.Error{Message: fmt.Sprintf(format, a...)}
 }
+
+
+
