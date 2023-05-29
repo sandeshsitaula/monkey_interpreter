@@ -6,7 +6,7 @@ const (
 	EOF     = "EOF"
 	IDENT   = "IDENT" //variables or fn names like add,foobar,x,y
 	INT     = "INT"   //number like 1234
-
+	STRING   =  "STRING"
 	ASSIGN    = "="
 	PLUS      = "+"
 	MINUS     = "-"
@@ -20,6 +20,7 @@ const (
 	LPAREN    = "("
 	RPAREN    = ")"
 	LBRACE    = "{"
+
 	RBRACE    = "}"
 	EQ        = "=="
 	NOT_EQ    = "!="

@@ -53,6 +53,8 @@ else false
 
 ==
 !=
+"foobar"
+"foo bar"
 `
 	tests := []struct {
 		expectedType    token.TokenType
@@ -101,6 +103,8 @@ else false
 		{token.FALSE, "false"},
 		{token.EQ, "=="},
 		{token.NOT_EQ, "!="},
+		{token.STRING,"foobar"},
+		{token.STRING,"foo bar"},
 		{token.EOF, ""},
 	}
 	l := New(input)
