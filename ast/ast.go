@@ -240,6 +240,8 @@ func (fi *FunctionLiteral) String() string {
 	return out.String()
 }
 
+
+//for calling function  eg hello(2,4)
 type CallExpression struct {
 	Token     token.Token //The '(' token
 	Function  Expression  //function identifier
@@ -259,3 +261,13 @@ func (ce *CallExpression) String() string {
 	out.WriteString(")")
 	return out.String()
 }
+
+
+//for handling strings
+type StringLiteral struct{
+	Token token.Token
+	Value string
+}
+func (sl *StringLiteral)expressionNode(){}
+func (sl *StringLiteral)TokenLiteral()string{return sl.Token.Literal}
+func (sl *StringLiteral)String()string{return sl.Token.Literal}
