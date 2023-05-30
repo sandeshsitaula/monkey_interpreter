@@ -196,6 +196,10 @@ return 1;
 			"unknown operator: BOOLEAN + BOOLEAN",
 		},
 		{"foobar", "identifier not found: foobar"},
+		{
+			`"hello"-"World"`,
+			"unknown operator:STRING - STRING",
+		},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
@@ -240,4 +244,19 @@ if str.Value!="hello world"{
 	t.Errorf("String has wrong value.ogt=%q",str.Value)
 }
 
+}
+
+//testing string concatenation
+func TestStringConcatenation(t *testing.T){
+	input:=`"Helo"+""+"World"`
+
+	evaluated:=testEval(input)
+	str,ok:=evaluated.(*object.String)
+
+	if !ok{
+		t.Fatalf("object is not String.got=%T (%+v)",evaluated,evaluated)
+	}
+	if str.Value!="HeloWorld"{
+		t.Errorf("String has wrong value.got=%q",str.Value)
+	}
 }
