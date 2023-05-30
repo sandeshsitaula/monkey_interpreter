@@ -7,7 +7,7 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `=+(){},*/-!<>;`
+	input := `=+(){},*/-!<>;[]`
 	tests := []struct {
 		expectedType    token.TokenType
 		expectedLiteral string
@@ -26,6 +26,8 @@ func TestNextToken(t *testing.T) {
 		{token.LT, "<"},
 		{token.GT, ">"},
 		{token.SEMICOLON, ";"},
+		{token.LBRACKET, "["},
+		{token.RBRACKET, "]"},
 		{token.EOF, ""},
 	}
 	l := New(input)
@@ -103,8 +105,8 @@ else false
 		{token.FALSE, "false"},
 		{token.EQ, "=="},
 		{token.NOT_EQ, "!="},
-		{token.STRING,"foobar"},
-		{token.STRING,"foo bar"},
+		{token.STRING, "foobar"},
+		{token.STRING, "foo bar"},
 		{token.EOF, ""},
 	}
 	l := New(input)

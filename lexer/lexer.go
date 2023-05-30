@@ -79,9 +79,12 @@ func (l *Lexer) NextToken() token.Token {
 
 		//handling string
 	case '"':
-		tok.Type=token.STRING
-		tok.Literal=l.readString()
-
+		tok.Type = token.STRING
+		tok.Literal = l.readString()
+	case '[':
+		tok = newToken(token.LBRACKET, l.ch)
+	case ']':
+		tok = newToken(token.RBRACKET, l.ch)
 
 	default: //for other letters
 		if isLetter(l.ch) {
@@ -105,16 +108,17 @@ func (l *Lexer) NextToken() token.Token {
 func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
-func (l *Lexer)readString()string{
-	position:=l.position+1
-	for{
+func (l *Lexer) readString() string {
+	position := l.position + 1
+	for {
 		l.readChar()
-		if l.ch=='"'||l.ch==0{
+		if l.ch == '"' || l.ch == 0 {
 			break
 		}
 	}
 	return l.input[position:l.position]
 }
+
 // READS entire word if any letter is encountered
 func (l *Lexer) readIdentifier() string {
 	position := l.position

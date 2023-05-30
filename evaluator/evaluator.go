@@ -35,7 +35,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(val) {
 			return val
 		}
-		env.Set(node.Name.Value, val)
+		return env.Set(node.Name.Value, val)
 
 	case *ast.FunctionLiteral:
 		params := node.Parameters

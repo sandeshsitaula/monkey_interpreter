@@ -2,11 +2,11 @@ package token
 
 // defining TokenTypes as const
 const (
-	ILLEGAL = "ILLEGAL"
-	EOF     = "EOF"
-	IDENT   = "IDENT" //variables or fn names like add,foobar,x,y
-	INT     = "INT"   //number like 1234
-	STRING   =  "STRING"
+	ILLEGAL   = "ILLEGAL"
+	EOF       = "EOF"
+	IDENT     = "IDENT" //variables or fn names like add,foobar,x,y
+	INT       = "INT"   //number like 1234
+	STRING    = "STRING"
 	ASSIGN    = "="
 	PLUS      = "+"
 	MINUS     = "-"
@@ -20,7 +20,8 @@ const (
 	LPAREN    = "("
 	RPAREN    = ")"
 	LBRACE    = "{"
-
+	LBRACKET  = "["
+	RBRACKET  = "]"
 	RBRACE    = "}"
 	EQ        = "=="
 	NOT_EQ    = "!="
