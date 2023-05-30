@@ -18,6 +18,8 @@ const (
 	ERROR_OBJ        = "ERROR"
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 	FUNCTION_OBJ     = "FUNCTION"
+	//for string  evaluation
+	STRING_OBJ="STRING"
 )
 
 type Object interface {
@@ -83,3 +85,14 @@ func (f *Function) Inspect() string {
 	out.WriteString("\n}")
 	return out.String()
 }
+
+
+//for storing string data
+type String struct{
+	Value string
+}
+
+func (s *String)Type()ObjectType{return STRING_OBJ}
+func (s *String )Inspect()string{return s.Value}
+
+
