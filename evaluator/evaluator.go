@@ -43,7 +43,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return &object.Function{Parameters: params, Env: env, Body: body}
 
 	case *ast.CallExpression:
-		function := Eval(node.Function, env)//here node.Function refers to identifier name function gets object.Function from environment
+		function := Eval(node.Function, env) //here node.Function refers to identifier name function gets object.Function from environment
 		if isError(function) {
 			return function
 		}
@@ -51,7 +51,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if len(args) == 1 && isError(args[0]) {
 			return args[0]
 		}
-		return applyFunction(function,args)
+		return applyFunction(function, args)
 
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
@@ -90,7 +90,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalIfExpression(node, env)
 
 	case *ast.StringLiteral:
-		return &object.String{Value:node.Value}
+		return &object.String{Value: node.Value}
 
 	case *ast.ReturnStatement:
 		val := Eval(node.ReturnValue, env)
@@ -107,39 +107,39 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 //all related to funciton calling
 
-
-//applyFunction gets object.Function because of environment get operation
-func applyFunction(fn object.Object,args []object.Object)object.Object{
-	function,ok:=fn.(*object.Function)
-	if !ok{
-		return newError("not a function : %s",fn.Type())
+// applyFunction gets object.Function because of environment get operation
+func applyFunction(fn object.Object, args []object.Object) object.Object {
+	//could be builtin or userdefined
+	switch fn := fn.(type) {
+	case *object.Function:
+		//extendedEnv creates new Environment which extends inner Environment  so all variables can be accessed
+		extendedEnv := extendFunctionEnv(fn, args)
+		evaluated := Eval(fn.Body, extendedEnv)
+		//unwrapReturnValue returns if return statement is found
+		return unwrapReturnValue(evaluated)
+	case *object.Builtin:
+		return fn.Fn(args...)
+	default:
+		return newError("not a function; %s", fn.Type())
 	}
-
-	//extendedEnv creates new Environment which extends inner Environment  so all variables can be accessed 
-	extendedEnv:=extendFunctionEnv(function,args)
-	evaluated:=Eval(function.Body,extendedEnv)
-	//unwrapReturnValue returns if return statement is found 
-	return unwrapReturnValue(evaluated)
-
 }
 
-func extendFunctionEnv(fn *object.Function,args []object.Object)*object.Environment{
-	env:=object.NewEnclosedEnvironment(fn.Env)
+func extendFunctionEnv(fn *object.Function, args []object.Object) *object.Environment {
+	env := object.NewEnclosedEnvironment(fn.Env)
 
-	for paramIdx,param:=range fn.Parameters{
-		env.Set(param.Value,args[paramIdx])
+	for paramIdx, param := range fn.Parameters {
+		env.Set(param.Value, args[paramIdx])
 	}
 	return env
 }
-func unwrapReturnValue(obj object.Object)object.Object{
-	if returnValue,ok:=obj.(*object.ReturnValue);ok{
+func unwrapReturnValue(obj object.Object) object.Object {
+	if returnValue, ok := obj.(*object.ReturnValue); ok {
 		return returnValue.Value
 	}
 	return obj
 }
 
-
-////////////////////////
+// //////////////////////
 func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Object {
 	var result []object.Object
 
@@ -154,14 +154,15 @@ func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Ob
 	return result
 }
 
-
-
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
-	val, ok := env.Get(node.Value)
-	if !ok {
-		return newError("identifier not found: " + node.Value)
+	if val, ok := env.Get(node.Value); ok {
+		return val
 	}
-	return val
+	if builtin, ok := builtins[node.Value]; ok {
+		return builtin
+	}
+	return newError("identifier not found: " + node.Value)
+
 }
 func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Object {
 	condition := Eval(ie.Condition, env)
@@ -200,22 +201,22 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	case left.Type() != right.Type():
 		return newError("type mismatch: %s %s %s", left.Type(), operator, right.Type())
 		//for string concatenation
-	case left.Type()==object.STRING_OBJ&&right.Type()==object.STRING_OBJ:
-		return evalStringInfixExpression(operator,left,right)
+	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
+		return evalStringInfixExpression(operator, left, right)
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 
 	}
 }
 
-func evalStringInfixExpression(operator string,left,right object.Object)object.Object{
-	if operator!="+"{
-		return newError("unknown operator:%s %s %s",left.Type(),operator,right.Type())
+func evalStringInfixExpression(operator string, left, right object.Object) object.Object {
+	if operator != "+" {
+		return newError("unknown operator:%s %s %s", left.Type(), operator, right.Type())
 	}
 
-	leftVal:=left.(*object.String).Value
-	rightVal:=right.(*object.String).Value
-	return &object.String{Value:leftVal+rightVal}
+	leftVal := left.(*object.String).Value
+	rightVal := right.(*object.String).Value
+	return &object.String{Value: leftVal + rightVal}
 }
 func evalIntegerInfixExpression(operator string, left, right object.Object) object.Object {
 	leftVal := left.(*object.Integer).Value
@@ -255,6 +256,7 @@ func evalPrefixExpression(operator string, right object.Object) object.Object {
 		return newError("unknown operator:%s%s", operator, right.Type())
 	}
 }
+
 func evalBangOperatorExpression(right object.Object) object.Object {
 	switch right {
 	case TRUE:
@@ -314,6 +316,3 @@ func evalBlockStatements(block *ast.BlockStatement, env *object.Environment) obj
 func newError(format string, a ...interface{}) *object.Error {
 	return &object.Error{Message: fmt.Sprintf(format, a...)}
 }
-
-
-

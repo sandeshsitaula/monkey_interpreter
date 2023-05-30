@@ -8,10 +8,15 @@ import (
 
 	"github.com/sandeshsitaula/monkeyinter/ast"
 )
+//for creating builtin functions for our interpreter
+type BuiltinFunction func(args ...Object)Object
+
 
 type ObjectType string
 
 const (
+
+	BUILTIN_OBJ="BUILTIN"
 	INTEGER_OBJ      = "INTEGER"
 	BOOLEAN_OBJ      = "BOOLEAN"
 	NULL_OBJ         = "NULL"
@@ -95,4 +100,10 @@ type String struct{
 func (s *String)Type()ObjectType{return STRING_OBJ}
 func (s *String )Inspect()string{return s.Value}
 
+type Builtin struct{
+	Fn BuiltinFunction
+}
 
+
+func (b *Builtin)Type()ObjectType{return BUILTIN_OBJ}
+func (b *Builtin)Inspect()string{return "builtin function"}
