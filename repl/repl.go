@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
 
 	"github.com/sandeshsitaula/monkeyinter/evaluator"
 	"github.com/sandeshsitaula/monkeyinter/lexer"
@@ -13,16 +14,24 @@ import (
 
 const PROMPT = ">> "
 
+var k int = len(os.Args)
+
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
 	for {
-		fmt.Printf(PROMPT)
+		if k <= 1 {
+			fmt.Println()
+			fmt.Printf(PROMPT)
+		}
+
 		scanned := scanner.Scan()
+
 		if !scanned {
 			return
 		}
 		line := scanner.Text()
+
 		l := lexer.New(line)
 		p := parser.New(l)
 		program := p.ParseProgram()
