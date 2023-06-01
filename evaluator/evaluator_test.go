@@ -306,3 +306,33 @@ func TestArrayLiterals(t *testing.T) {
 	testIntegerObject(t, result.Elements[1], 4)
 	testIntegerObject(t, result.Elements[2], 6)
 }
+
+// test index access in array
+func TestArrayIndexExpressions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{
+			"[1,2,3][0]",
+			1,
+		},
+		{
+			"[1,2,3][1]",
+			2,
+		},
+		{
+			"let myArray=[1,2,3];myArray[2];",
+			3,
+		},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		integer, ok := tt.expected.(int)
+		if ok {
+			testIntegerObject(t, evaluated, int64(integer))
+		} else {
+			testNullObject(t, evaluated)
+		}
+	}
+}
