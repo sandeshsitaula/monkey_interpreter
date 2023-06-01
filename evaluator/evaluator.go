@@ -83,6 +83,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return evalInfixExpression(node.Operator, left, right)
 
+	case *ast.ArrayLiteral:
+		elements := evalExpressions(node.Elements, env)
+		if len(elements) == 1 && isError(elements[0]) {
+			return elements[0]
+		}
+		return &object.Array{Elements: elements}
+
 	case *ast.BlockStatement:
 		return evalBlockStatements(node, env)
 
@@ -140,6 +147,7 @@ func unwrapReturnValue(obj object.Object) object.Object {
 }
 
 // //////////////////////
+
 func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Object {
 	var result []object.Object
 

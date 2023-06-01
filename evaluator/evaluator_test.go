@@ -230,66 +230,79 @@ func TestLetStatements(t *testing.T) {
 	}
 }
 
-
 //test for string evaluation
 
-func TestStringLiteral(t *testing.T){
-input:=`"hello world"`
-evaluated:=testEval(input)
-str,ok:=evaluated.(*object.String)
-if !ok{
-	t.Fatalf("object is not string.got=%T(%+v)",evaluated,evaluated)
-}
-if str.Value!="hello world"{
-	t.Errorf("String has wrong value.ogt=%q",str.Value)
-}
-
-}
-
-//testing string concatenation
-func TestStringConcatenation(t *testing.T){
-	input:=`"Helo"+""+"World"`
-
-	evaluated:=testEval(input)
-	str,ok:=evaluated.(*object.String)
-
-	if !ok{
-		t.Fatalf("object is not String.got=%T (%+v)",evaluated,evaluated)
+func TestStringLiteral(t *testing.T) {
+	input := `"hello world"`
+	evaluated := testEval(input)
+	str, ok := evaluated.(*object.String)
+	if !ok {
+		t.Fatalf("object is not string.got=%T(%+v)", evaluated, evaluated)
 	}
-	if str.Value!="HeloWorld"{
-		t.Errorf("String has wrong value.got=%q",str.Value)
+	if str.Value != "hello world" {
+		t.Errorf("String has wrong value.ogt=%q", str.Value)
+	}
+
+}
+
+// testing string concatenation
+func TestStringConcatenation(t *testing.T) {
+	input := `"Helo"+""+"World"`
+
+	evaluated := testEval(input)
+	str, ok := evaluated.(*object.String)
+
+	if !ok {
+		t.Fatalf("object is not String.got=%T (%+v)", evaluated, evaluated)
+	}
+	if str.Value != "HeloWorld" {
+		t.Errorf("String has wrong value.got=%q", str.Value)
 	}
 }
 
-
-
-//for testing for builtin funcitons
-func TestBuiltinFunctions(t *testing.T){
-	tests:=[]struct{
-		input string
+// for testing for builtin funcitons
+func TestBuiltinFunctions(t *testing.T) {
+	tests := []struct {
+		input    string
 		expected interface{}
-		
 	}{
-		{`len("")`,0},
-		{`len("four")`,4},
-		{`len("hello world")`,11},
-		{`len(1)`,"argument to `len` not supported,got INTEGER"},
-		{`len("one","two")`,"wrong number of arguments.got=2,want=1"},
+		{`len("")`, 0},
+		{`len("four")`, 4},
+		{`len("hello world")`, 11},
+		{`len(1)`, "argument to `len` not supported,got INTEGER"},
+		{`len("one","two")`, "wrong number of arguments.got=2,want=1"},
 	}
-	for _,tt:=range tests{
-		evaluated:=testEval(tt.input)
-		switch expected:=tt.expected.(type){
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		switch expected := tt.expected.(type) {
 		case int:
-			testIntegerObject(t,evaluated,int64(expected))
+			testIntegerObject(t, evaluated, int64(expected))
 		case string:
-			errObj,ok:=evaluated.(*object.Error)
-			if !ok{
-				t.Errorf("object is not Error.got=%T (%+v)",evaluated,evaluated)
+			errObj, ok := evaluated.(*object.Error)
+			if !ok {
+				t.Errorf("object is not Error.got=%T (%+v)", evaluated, evaluated)
 				continue
 			}
-			if errObj.Message!=expected{
-				t.Errorf("wrong error message. expected=%q.got=%q",expected,errObj.Message)
+			if errObj.Message != expected {
+				t.Errorf("wrong error message. expected=%q.got=%q", expected, errObj.Message)
 			}
 		}
-	}	
+	}
+}
+
+func TestArrayLiterals(t *testing.T) {
+	input := "[1,2*2,3+3]"
+	evaluated := testEval(input)
+	result, ok := evaluated.(*object.Array)
+	if !ok {
+		t.Fatalf("object is not Array.got=%T (%+v)", evaluated, evaluated)
+
+	}
+	if len(result.Elements) != 3 {
+		t.Fatalf("array has wrong num of elements.got=%d", len(result.Elements))
+	}
+	testIntegerObject(t, result.Elements[0], 1)
+
+	testIntegerObject(t, result.Elements[1], 4)
+	testIntegerObject(t, result.Elements[2], 6)
 }
