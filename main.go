@@ -25,7 +25,6 @@ func main() {
 		fmt.Printf("Type some commands")
 		w = os.Stdin
 	} else {
-
 		filename := os.Args[1]
 		if !strings.HasSuffix(filename, ".mn") {
 			fmt.Println("Wrong file format. Only  .mn extension allowed")
