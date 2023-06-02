@@ -5,9 +5,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/sandeshsitaula/monkeyinter/ast"
-	"github.com/sandeshsitaula/monkeyinter/lexer"
-	"github.com/sandeshsitaula/monkeyinter/token"
+	"github.com/sandeshsitaula/monkey/ast"
+	"github.com/sandeshsitaula/monkey/lexer"
+	"github.com/sandeshsitaula/monkey/token"
 )
 
 const (

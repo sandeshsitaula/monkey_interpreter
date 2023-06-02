@@ -7,10 +7,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/sandeshsitaula/monkeyinter/evaluator"
-	"github.com/sandeshsitaula/monkeyinter/lexer"
-	"github.com/sandeshsitaula/monkeyinter/object"
-	"github.com/sandeshsitaula/monkeyinter/parser"
+	"github.com/sandeshsitaula/monkey/evaluator"
+	"github.com/sandeshsitaula/monkey/lexer"
+	"github.com/sandeshsitaula/monkey/object"
+	"github.com/sandeshsitaula/monkey/parser"
 )
 
 const PROMPT = ">> "

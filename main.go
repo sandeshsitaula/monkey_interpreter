@@ -7,7 +7,7 @@ import (
 	"os/user"
 	"strings"
 
-	"github.com/sandeshsitaula/monkeyinter/repl"
+	"github.com/sandeshsitaula/monkey/repl"
 )
 
 func main() {

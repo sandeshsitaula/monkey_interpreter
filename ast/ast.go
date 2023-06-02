@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/sandeshsitaula/monkeyinter/token"
+	"github.com/sandeshsitaula/monkey/token"
 )
 
 // Representing all statements as Node

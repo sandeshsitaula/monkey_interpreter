@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/sandeshsitaula/monkeyinter/ast"
+	"github.com/sandeshsitaula/monkey/ast"
 )
 
 // for creating builtin functions for our interpreter

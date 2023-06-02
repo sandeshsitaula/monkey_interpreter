@@ -1,6 +1,6 @@
 package lexer
 
-import "github.com/sandeshsitaula/monkeyinter/token"
+import "github.com/sandeshsitaula/monkey/token"
 
 // Lexer struct provides NextToken method to get token on each call using the below structure
 type Lexer struct {

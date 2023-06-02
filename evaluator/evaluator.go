@@ -3,8 +3,8 @@ package evaluator
 import (
 	"fmt"
 
-	"github.com/sandeshsitaula/monkeyinter/ast"
-	"github.com/sandeshsitaula/monkeyinter/object"
+	"github.com/sandeshsitaula/monkey/ast"
+	"github.com/sandeshsitaula/monkey/object"
 )
 
 var (
