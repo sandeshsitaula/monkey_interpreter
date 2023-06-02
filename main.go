@@ -22,7 +22,7 @@ func main() {
 	*/
 	if len(os.Args) <= 1 {
 		fmt.Printf("Hello %s! This is monkey language", user.Username)
-		fmt.Printf("Type some commands")
+		fmt.Printf("\nType some commands\n")
 		w = os.Stdin
 	} else {
 		filename := os.Args[1]
