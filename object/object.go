@@ -51,7 +51,7 @@ func (b *Boolean) Inspect() string  { return fmt.Sprintf("%t", b.Value) }
 type NULL struct{}
 
 func (n *NULL) Type() ObjectType { return NULL_OBJ }
-func (n *NULL) Inspect() string  { return "null" }
+func (n *NULL) Inspect() string  { return "" }
 
 type ReturnValue struct {
 	Value Object
